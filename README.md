@@ -24,7 +24,7 @@ This tutorial uses [NetLogo](https://ccl.northwestern.edu/netlogo/), a flexible 
       - [NOTE #1: classic models as reference](#note-1-classic-models-as-reference)
       - [Getting to know NetLogo](#getting-to-know-netlogo)
       - [NOTE #2: other platforms/languages](#note-2-other-platformslanguages)
-      - [Prototyping 'Watermania'](#prototyping-watermania)
+      - [Prototyping](#prototyping)
     - [Block B](#block-b)
       - [Verification-refactoring cycle](#verification-refactoring-cycle)
       - [Modularity and re-use](#modularity-and-re-use)
@@ -145,7 +145,7 @@ Case study:
 
 #### NOTE #2: other platforms/languages
 
-#### Prototyping 'Watermania'
+#### Prototyping
 
 ---
 ### Block B
