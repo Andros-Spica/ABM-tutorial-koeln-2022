@@ -161,11 +161,15 @@ end
 
 to display-sites
 
-  gis:set-drawing-color red
-  gis:draw sitesData_EMIII-MMIA 1
-
+  ;;; sites dated to EMIII-MMIA: yellow
   gis:set-drawing-color yellow
-  gis:draw sitesData_MMIB 1
+  gis:draw sitesData_EMIII-MMIA 2
+
+  ;;; sites dated to MMIB: red
+  gis:set-drawing-color red
+  gis:draw sitesData_MMIB 2
+
+  ;;; sites dated to both EMIII-MMIA and MMIB: orange
 
 end
 
@@ -213,11 +217,11 @@ end
 to load-gis
 
   ; Load all of our datasets
-  set sitesData_EMIII-MMIA gis:load-dataset "data//Cretedata2//EMIII_MMIAsites.shp"
-  set sitesData_MMIB gis:load-dataset "data//Cretedata2//MMIBsites.shp"
+  set sitesData_EMIII-MMIA gis:load-dataset "data//Cretedata//EMIII_MMIAsites.shp"
+  set sitesData_MMIB gis:load-dataset "data//Cretedata//MMIBsites.shp"
 
-  set elevationData gis:load-dataset "data//Cretedata2//dem15.asc"
-  set riversData gis:load-dataset "data//Cretedata2//rivers.shp"
+  set elevationData gis:load-dataset "data//Cretedata//dem15.asc"
+  set riversData gis:load-dataset "data//Cretedata//rivers.shp"
 
   ; Set the world envelope to the union of all of our dataset's envelopes ; NOT NEEDED IF USING DEM?
   gis:set-world-envelope (gis:envelope-of elevationData)
@@ -225,9 +229,9 @@ to load-gis
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
+103
 10
-956
+849
 484
 -1
 -1
