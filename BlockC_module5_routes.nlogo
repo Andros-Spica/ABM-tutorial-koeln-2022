@@ -2,7 +2,10 @@
 ;;; GNU GENERAL PUBLIC LICENSE ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;  The PondTrade model - Koehl ABM tutorial version
+;;  module for calculating least cost path routes
+;;  Koehl ABM tutorial version
+;;  based on:
+;;  Indus Village - Land model (flow accumulations) and The PondTrade model (routes)
 ;;  Copyright (C) 2022 Andreas Angourakis (andros.spica@gmail.com)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
@@ -26,6 +29,8 @@ extensions [ gis ]
 ;;; BREEDS ;;;;;;
 ;;;;;;;;;;;;;;;;;
 
+breed [ flowHolders flowHolder ]
+breed [ sites site ]
 breed [ settlements settlement ]
 
 ;;;;;;;;;;;;;;;;;
@@ -35,19 +40,11 @@ breed [ settlements settlement ]
 globals
 [
   patchesWithElevationData
-  minElevation
+  noElevationDataTag
   maxElevation
-
-  seaLevel
-
-  patchXpixelScale
-  pixelExtentMargin
-  patchSize
 
   width
   height
-
-  siteMarkerScale_min siteMarkerScale_max
 
   ;;; GIS data holders
   sitesData_EMIII-MMIA
@@ -55,22 +52,48 @@ globals
   elevationData
   riversData
 
+  siteMarkerScale_min siteMarkerScale_max
+
+  ;;; variables
+
+  maxFlowAccumulation
+
   routes
 ]
 
-settlements-own
+sites-own
 [
   ;;; from GIS data
   name
   siteType
   period
+]
 
+settlements-own
+[
   sizeLevel
 ]
 
 patches-own
 [
-  elevation
+  elevation ; elevation above sea level [m]
+
+  flow_direction        ; the numeric code for the (main) direction of flow or
+                        ; drainage within the land unit.
+                        ; Following Jenson & Domingue (1988) convention:
+                        ; NW = 64,   N = 128,        NE = 1,
+                        ; W = 32,     <CENTRE>,   E = 2,
+                        ; SW = 16,     S = 8,          SE = 4
+
+  flow_receive          ; Boolean variable stating whether or not the land unit receives
+                        ; the flow of a neighbour.
+
+  flow_accumulation     ; the amount of flow units accumulated in the land unit.
+                        ; A Flow unit is the volume of runoff water flowing from one land unit
+                        ; to another (assumed constant and without losses).
+  flow_accumulationState ; the state of the land unit regarding the calculation of flow
+                        ; accumulation (auxiliary variable).
+
   isRiver
 
   pathCost
@@ -91,103 +114,48 @@ to setup
   reset-timer
   clear-all
 
-  set-parameters
+  ; --- loading/testing parameters -----------
 
-  create-map
+  import-map-with-flows ; import-world must be the first step
 
-  carefully [ import-routes-from-file ] [ set-routes ]
+  ; --- core procedures ----------------------
+
+  setup-patches
+
+  setup-settlements
+
+  ifelse (import-routes) [ import-routes-from-file ] [ set-routes export-routes-to-file ]
+
+  ; --- display & output handling ------------------------
 
   setup-display
-
-  update-display
 
   output-print (word "Set up took " timer " seconds.")
 
 end
 
-to create-map
+to import-map-with-flows
 
-  load-gis  ;; load in the GIS data
+  import-world "data/terrainWithFlows/BlockC_module2_flows world.csv"
 
-  set-world-dimensions ;; set world dimensions according to GIS data
-
-  setup-patches ;; use GIS data to set patch variables
-
-  setup-settlements ;; create site agents with properties from sitesData
-
-end
-
-to set-parameters
-
-  ;;; set the values of parameters, here fixed as constants
-
-  set seaLevel 0
-
-  ;;; for better performance, we take a multiple fraction of the dimensions of elevationData,
-  ;;; so that patches will get average values or more regular sets of pixels
-  ;;; for example, with patchXpixelScale = 0.15, the pixel resolution will be approx. 100m instead of 15m
-  ;;; NOTE: when changing patchXpixelScale, pixelExtentMargin and patchSize may need to be adjusted accordingly)
-
-  set patchXpixelScale    0.1 ;;; keep it less than 0.25
-  set pixelExtentMargin  50
-  set patchSize           3
-
-  ;;; define scale factors for the display of settlements (percentage of width)
-  set siteMarkerScale_min 0.1
-  set siteMarkerScale_max 1
-
-end
-
-to set-world-dimensions
-
-  set width ceiling ((pixelExtentMargin + gis:width-of elevationData) * patchXpixelScale)
-  set height ceiling ((pixelExtentMargin + gis:height-of elevationData) * patchXpixelScale)
-
-  resize-world 0 width 0 height
-
-  set-patch-size patchSize
+  ;;; reduce patch size in pixels
+  set-patch-size 3
 
 end
 
 to setup-patches
 
-  setup-elevation
-
-  setup-rivers
-
   assign-path-cost
-
-end
-
-to setup-elevation
-
-  gis:apply-raster elevationData elevation
-
-  set patchesWithElevationData patches with [(elevation <= 0) or (elevation >= 0)]
-
-  set minElevation min [elevation] of patchesWithElevationData
-
-  set maxElevation max [elevation] of patchesWithElevationData
-
-end
-
-to setup-rivers
-
-  ;print gis:feature-list-of riversData
-  ask patches
-  [
-    set isRiver gis:intersects? riversData self
-  ]
 
 end
 
 to assign-path-cost
 
-  ask patches [ set pathCost 9999 ] ;;; this makes routes crossing patches with no elevation data very unlikely
+  ask patches with [elevation = noElevationDataTag] [ set pathCost 9999 ] ;;; this makes routes crossing patches with no elevation data extremely unlikely
 
   ask patchesWithElevationData
   [
-    let myValidNeighborsAndI (patch-set self (neighbors with [(elevation <= 0) or (elevation >= 0)]))
+    let myValidNeighborsAndI (patch-set self (neighbors with [elevation > noElevationDataTag]))
 
     ifelse (count myValidNeighborsAndI > 1)
     [
@@ -202,31 +170,18 @@ end
 
 to setup-settlements
 
-  ;print gis:feature-list-of sitesData
-
-  if (simulation-period = "EMIII-MMIA")
+  ask sites with [period = simulation-period]
   [
-    gis:create-turtles-from-points-manual sitesData_EMIII-MMIA settlements
-    [["NAME" "name"] ["TYPE" "siteType"]]
+    set shape "dot"
+    set size 5
+
+    hatch-settlements 1
     [
-      set period "EMIII-MMIA"
-    ]
-  ]
-
-  if (simulation-period = "MMIB")
-  [
-    gis:create-turtles-from-points-manual sitesData_MMIB settlements
-    [["NAME" "name"] ["TYPE" "siteType"]]
-    [
-      set period "MMIB"
-    ]
-  ]
-
-  ask settlements
-  [
-    set sizeLevel 1
+      set sizeLevel 1
 
       set shape "circle 2"
+      set size 5
+    ]
   ]
 
 end
@@ -426,94 +381,7 @@ end
 
 to setup-display
 
-  display-rivers
-
-  display-site-markers
-
-  paint-elevation-of-patches
-
-end
-
-to update-display
-
   paint-routes
-
-  ;paint-active-routes
-
-  update-settlement-display-size
-
-end
-
-to display-site-markers
-
-  if (show-site-markers and simulation-period = "EMIII-MMIA")
-  [
-    gis:set-drawing-color red
-    gis:draw sitesData_EMIII-MMIA 1
-  ]
-
-  if (show-site-markers and simulation-period = "MMIB")
-  [
-    gis:set-drawing-color yellow
-    gis:draw sitesData_MMIB 1
-  ]
-
-end
-
-to display-rivers
-
-  gis:set-drawing-color blue
-  gis:draw riversData 1
-
-end
-
-to paint-elevation-of-patches
-
-  ;;; paint patches according to elevation
-  ;;; NOTE: we must filter out those patches outside the DEM
-  ask patches with [(elevation <= 0) or (elevation >= 0)]
-  [
-    paint-elevation
-  ]
-
-end
-
-to paint-elevation
-
-  set pcolor get-elevation-color elevation
-
-end
-
-to-report get-elevation-color [ elevationValue ]
-
-  let elevationGradient 0
-
-  if (elevationValue > seaLevel)
-  [
-    let normSupElevation elevationValue - seaLevel
-    let normSupMaxElevation maxElevation - seaLevel + 1E-6
-    set elevationGradient 100 + (155 * (normSupElevation / normSupMaxElevation))
-    report rgb (elevationGradient - 100) elevationGradient 0
-  ]
-
-;  if (elevationValue <= seaLevel)
-;  [
-;    report blue
-;  ]
-
-  report black
-
-end
-
-to update-settlement-display-size
-
-  let maxSettlementSize max [sizeLevel] of settlements
-
-  ask settlements
-  [
-    ; scale the size of settlements according to their dynamic free-scaled sizeLevel
-    set size siteMarkerScale_min + (sizeLevel / maxSettlementSize) * siteMarkerScale_max
-  ]
 
 end
 
@@ -531,7 +399,7 @@ to paint-routes
 
     foreach aRoute
     [ ??1 ->
-      ask ??1 [ paint-elevation ]
+      ask ??1 [ display-elevation ]
     ]
   ]
 
@@ -560,34 +428,25 @@ to paint-routes
 
 end
 
+to display-elevation
+
+  let elevationGradient 100 + (155 * (elevation / maxElevation))
+  set pcolor rgb (elevationGradient - 100) elevationGradient 0
+
+end
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;; DATA LOAD AND PREPARATION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-to load-gis
-
-  ; Load all of our datasets
-  set sitesData_EMIII-MMIA gis:load-dataset "data//Cretedata//EMIII_MMIAsites.shp"
-  set sitesData_MMIB gis:load-dataset "data//Cretedata//MMIBsites.shp"
-
-  set elevationData gis:load-dataset "data//Cretedata//dem15.asc"
-  set riversData gis:load-dataset "data//Cretedata//rivers.shp"
-
-  ; Set the world envelope to the union of all of our dataset's envelopes ; NOT NEEDED IF USING DEM?
-  gis:set-world-envelope (gis:envelope-of elevationData)
-
-end
-
 to export-routes-to-file
 
   ;;; build a unique file name to identify current setting
-  let filePath (word "data//routes//routes_" simulation-period "_patchXpixelScale=" patchXpixelScale "_pixelExtentMargin=" pixelExtentMargin"_w=" world-width "_h=" world-height "_randomSeed=" randomSeed ".txt")
+  let filePath (word "data/routes/routes_" simulation-period "_w=" world-width "_h=" world-height "_randomSeed=" randomSeed ".txt")
 
   file-open filePath
 
   file-print (word "simulation-period: " simulation-period)
-  file-print (word "patchXpixelScale: " patchXpixelScale)
-  file-print (word "pixelExtentMargin: " pixelExtentMargin)
   file-print (word "width: " world-width "; height: " world-height)
   file-print (word "randomSeed: " randomSeed)
 
@@ -604,11 +463,8 @@ end
 
 to import-routes-from-file
 
-  ;;; make sure all parameter values are loaded
-  set-parameters
-
   ;;; get unique file name corresponding to the current setting
-  let filePath (word "data//routes//routes_" simulation-period "_patchXpixelScale=" patchXpixelScale "_pixelExtentMargin=" pixelExtentMargin"_w=" world-width "_h=" world-height "_randomSeed=" randomSeed ".txt")
+  let filePath (word "data/routes/routes_" simulation-period "_w=" world-width "_h=" world-height "_randomSeed=" randomSeed ".txt")
 
   ifelse (not file-exists? filePath)
   [ print (word "WARNING: could not find '" filePath "'") stop ] ;;; unfortunately the stop command doesn't stop the setup procedure
@@ -619,8 +475,6 @@ to import-routes-from-file
 
     let howHeadingLinesShouldBe (list
       (word "simulation-period: " simulation-period)
-      (word "patchXpixelScale: " patchXpixelScale)
-      (word "pixelExtentMargin: " pixelExtentMargin)
       (word "width: " world-width "; height: " world-height)
       (word "randomSeed: " randomSeed)
       )
@@ -689,10 +543,10 @@ ticks
 30.0
 
 BUTTON
-105
-20
-172
-53
+42
+21
+109
+54
 setup
 setup
 NIL
@@ -701,82 +555,32 @@ T
 OBSERVER
 NIL
 0
-NIL
-NIL
-1
-
-BUTTON
-177
-181
-271
-214
-Update display
-update-display
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
 NIL
 NIL
 1
 
 OUTPUT
 26
-431
+179
 266
-485
+233
 11
 
 CHOOSER
-126
-113
-264
-158
+120
+66
+258
+111
 simulation-period
 simulation-period
 "EMIII-MMIA" "MMIB"
 0
 
-SWITCH
-10
-181
-167
-214
-show-site-markers
-show-site-markers
-1
-1
--1000
-
-SWITCH
-10
-214
-123
-247
-showRoutes
-showRoutes
-0
-1
--1000
-
-SWITCH
-10
-247
-148
-280
-showActiveRoutes
-showActiveRoutes
-1
-1
--1000
-
 INPUTBOX
-26
-105
-102
-165
+34
+63
+110
+123
 randomSeed
 0.0
 1
@@ -784,10 +588,10 @@ randomSeed
 Number
 
 BUTTON
-14
-63
-139
-96
+115
+21
+240
+54
 NIL
 export-routes-to-file
 NIL
@@ -800,22 +604,27 @@ NIL
 NIL
 1
 
-BUTTON
-144
-63
-273
-96
-NIL
-import-routes-from-file
-NIL
+SWITCH
+133
+131
+246
+164
+showRoutes
+showRoutes
+0
 1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
+-1000
+
+SWITCH
+16
+131
+132
+164
+import-routes
+import-routes
 1
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -1019,6 +828,18 @@ line half
 true
 0
 Line -7500403 true 150 0 150 150
+
+line half 1
+true
+0
+Line -7500403 true 150 0 150 300
+Rectangle -7500403 true true 135 0 165 150
+
+line half 2
+true
+0
+Line -7500403 true 150 0 150 300
+Rectangle -7500403 true true 120 0 180 150
 
 pentagon
 false

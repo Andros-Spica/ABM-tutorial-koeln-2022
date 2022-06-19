@@ -9,10 +9,8 @@ extensions [ gis ]
 globals
 [
   patchesWithElevationData
-  minElevation
+  noElevationDataTag
   maxElevation
-
-  seaLevel
 
   width
   height
@@ -47,19 +45,9 @@ to setup
 
   clear-all
 
-  set-parameters
-
   create-map
 
   update-display
-
-end
-
-to set-parameters
-
-  ;;; set the values of parameters, here fixed as constants
-
-  set seaLevel 0
 
 end
 
@@ -106,15 +94,11 @@ to setup-elevation
 
   set patchesWithElevationData patches with [(elevation <= 0) or (elevation >= 0)]
 
-  set minElevation min [elevation] of patchesWithElevationData
+  ;;; replace NaN values added by the gis extension with noElevationDataTag, so it does not generate problems after
+  set noElevationDataTag -9999
+  ask patches with [not ((elevation <= 0) or (elevation >= 0))] [ set elevation noElevationDataTag ]
 
   set maxElevation max [elevation] of patchesWithElevationData
-
-end
-
-to-report get-patches-with-elevation-data
-
-  report patches with [(elevation <= 0) or (elevation >= 0)]
 
 end
 
@@ -130,17 +114,45 @@ end
 
 to setup-sites
 
-  ;print gis:feature-list-of sitesData
-  gis:create-turtles-from-points-manual sitesData_EMIII-MMIA sites
-  [["NAME" "name"] ["TYPE" "siteType"]]
+  ;;; gis extension will re-use a site, if it was already created in a position,
+  ;;; and modify any values we already set.
+  ;;; In order to avoid this, we cannot use gis:create-turtles-from-points
+
+  let datasetPeriod "EMIII-MMIA"
+  foreach gis:feature-list-of sitesData_EMIII-MMIA
   [
-    set period "EMIII-MMIA"
+    vectorFeature ->
+
+    create-site-from-feature vectorFeature datasetPeriod
   ]
 
-  gis:create-turtles-from-points-manual sitesData_MMIB sites
-  [["NAME" "name"] ["TYPE" "siteType"]]
+  set datasetPeriod "MMIB"
+  foreach gis:feature-list-of sitesData_MMIB
   [
-    set period "MMIB"
+    vectorFeature ->
+
+    create-site-from-feature vectorFeature datasetPeriod
+  ]
+
+end
+
+to create-site-from-feature [ vectorFeature datasetPeriod ]
+
+  let coordTuple gis:location-of (first (first (gis:vertex-lists-of vectorFeature)))
+  let featureName gis:property-value vectorFeature "NAME"
+  let featureType gis:property-value vectorFeature "TYPE"
+
+  let long item 0 coordTuple
+  let lat item 1 coordTuple
+
+  create-sites 1
+  [
+    setxy long lat
+    set name featureName
+    set siteType featureType
+    set period datasetPeriod
+
+    set shape "dot"
   ]
 
 end
@@ -183,30 +195,27 @@ end
 to paint-elevation
 
   ;;; paint patches according to elevation
-  ;;; NOTE: we must filter out those patches outside the DEM,
-  ask patches with [(elevation <= 0) or (elevation >= 0)]
+  ;;; NOTE: we must filter out those patches outside the DEM
+  ask patchesWithElevationData
   [
-    set pcolor get-elevation-color elevation
+    let elevationGradient 100 + (155 * (elevation / maxElevation))
+    set pcolor rgb (elevationGradient - 100) elevationGradient 0
   ]
 
 end
 
-to-report get-elevation-color [ elevationValue ]
+to switch-site-labels
 
-  let elevationGradient 0
-
-  if (elevationValue > seaLevel)
+  ask sites
   [
-    let normSupElevation elevationValue - seaLevel
-    let normSupMaxElevation maxElevation - seaLevel + 1E-6
-    set elevationGradient 100 + (155 * (normSupElevation / normSupMaxElevation))
-    report rgb (elevationGradient - 100) elevationGradient 0
+    ifelse (length label = 0)
+    [
+      set label name
+    ]
+    [
+      set label ""
+    ]
   ]
-
-;  if (elevationValue <= seaLevel)
-;  [
-;    report blue
-;  ]
 
 end
 
@@ -217,13 +226,13 @@ end
 to load-gis
 
   ; Load all of our datasets
-  set sitesData_EMIII-MMIA gis:load-dataset "data//Cretedata//EMIII_MMIAsites.shp"
-  set sitesData_MMIB gis:load-dataset "data//Cretedata//MMIBsites.shp"
+  set sitesData_EMIII-MMIA gis:load-dataset "data/Cretedata/EMIII_MMIAsites.shp"
+  set sitesData_MMIB gis:load-dataset "data/Cretedata/MMIBsites.shp"
 
-  set elevationData gis:load-dataset "data//Cretedata//dem15.asc"
-  set riversData gis:load-dataset "data//Cretedata//rivers.shp"
+  set elevationData gis:load-dataset "data/Cretedata/dem15.asc"
+  set riversData gis:load-dataset "data/Cretedata/rivers.shp"
 
-  ; Set the world envelope to the union of all of our dataset's envelopes ; NOT NEEDED IF USING DEM?
+  ; Set the world envelope to the union of all of our dataset's envelopes
   gis:set-world-envelope (gis:envelope-of elevationData)
 
 end
@@ -262,6 +271,23 @@ BUTTON
 57
 NIL
 setup
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+4
+63
+99
+96
+NIL
+switch-site-labels
 NIL
 1
 T
