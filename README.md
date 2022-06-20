@@ -5020,7 +5020,7 @@ to import-routes-from-file
   [
     file-open filePath
 
-    let headingNumberOfLines 5
+    let headingNumberOfLines 3
 
     let howHeadingLinesShouldBe (list
       (word "simulation-period: " simulation-period)
@@ -5038,9 +5038,7 @@ to import-routes-from-file
     let passedCheck (
       (item 0 headingLines = item 0 howHeadingLinesShouldBe) and
       (item 1 headingLines = item 1 howHeadingLinesShouldBe) and
-      (item 2 headingLines = item 2 howHeadingLinesShouldBe) and
-      (item 3 headingLines = item 3 howHeadingLinesShouldBe) and
-      (item 4 headingLines = item 4 howHeadingLinesShouldBe)
+      (item 2 headingLines = item 2 howHeadingLinesShouldBe)
     )
 
     ifelse (not passedCheck)

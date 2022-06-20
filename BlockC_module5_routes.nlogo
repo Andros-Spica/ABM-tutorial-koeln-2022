@@ -446,10 +446,6 @@ to export-routes-to-file
 
   file-open filePath
 
-  file-print (word "simulation-period: " simulation-period)
-  file-print (word "width: " world-width "; height: " world-height)
-  file-print (word "randomSeed: " randomSeed)
-
   foreach routes
   [
     aRoute ->
@@ -471,43 +467,16 @@ to import-routes-from-file
   [
     file-open filePath
 
-    let headingNumberOfLines 5
+    set routes []
 
-    let howHeadingLinesShouldBe (list
-      (word "simulation-period: " simulation-period)
-      (word "width: " world-width "; height: " world-height)
-      (word "randomSeed: " randomSeed)
-      )
-    print howHeadingLinesShouldBe
-    let headingLines []
-    foreach (n-values headingNumberOfLines [i -> i + 1])
+    while [not file-at-end?]
     [
-      headingLineIndex ->
-      set headingLines lput (word "" file-read-line "") headingLines
-    ]
-    print headingLines
-    let passedCheck (
-      (item 0 headingLines = item 0 howHeadingLinesShouldBe) and
-      (item 1 headingLines = item 1 howHeadingLinesShouldBe) and
-      (item 2 headingLines = item 2 howHeadingLinesShouldBe) and
-      (item 3 headingLines = item 3 howHeadingLinesShouldBe) and
-      (item 4 headingLines = item 4 howHeadingLinesShouldBe)
-    )
+      let lineString file-read-line
+      set lineString remove-item 0 lineString
+      set lineString remove-item (length lineString - 1) lineString
+      set lineString (word "(list " lineString " )")
 
-    ifelse (not passedCheck)
-    [ print (word "WARNING: " filePath " does not contain the expected metadata defining the current parameter setting") stop ] ;;; unfortunately the stop command doesn't stop the setup procedure
-    [
-      set routes []
-
-      while [not file-at-end?]
-      [
-        let lineString file-read-line
-        set lineString remove-item 0 lineString
-        set lineString remove-item (length lineString - 1) lineString
-        set lineString (word "(list " lineString " )")
-
-        set routes lput (run-result lineString) routes
-      ]
+      set routes lput (run-result lineString) routes
     ]
   ]
 
