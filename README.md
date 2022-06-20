@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/492761266.svg)](https://zenodo.org/badge/latestdoi/492761266)
+
 # Archaeological ABM at Cologne: from concept to application
 Materials for the session organized by the [CoDArchLab](http://archaeoinformatik.uni-koeln.de/) in the Institute of Archaeology at University of Cologne (20/6/2022).
 
