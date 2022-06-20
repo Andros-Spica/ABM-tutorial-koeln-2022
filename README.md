@@ -173,7 +173,7 @@ Last, another significant advantage of ABM is that it can include parts (algorit
 ---
 ### ABM in archaeology
 
-ABM has conceptual roots and applications in other fields relatively early, hand-to-hand with the history of computer science. However, this methodology was formed as it is today and introduced more broadly into social sciences until the late 1990s. In its many forms, simulation methods only started to be used in disciplines like archaeology due to the development of personal computers, which progressively lowered computational times from days to seconds.
+ABM has conceptual roots and applications in other fields relatively early, hand-to-hand with the history of computer science. However, this methodology was formed as it is today and introduced more broadly into social sciences only in the late 1990s. In its many forms, simulation methods only started to be used in disciplines like archaeology due to the development of personal computers, which progressively lowered computational times from days to seconds.
 
 ABM has been exceptionally well accepted by archaeologists, given its pre-adaptation towards distributed and stochastic processes. In theory, most phenomena of interest for archaeology can be represented with ABM, to the satisfaction of archaeologists. Other modelling and simulation approaches (*e.g.*, Dynamic Systems) were and still are used but often encounter great resistance due to their higher abstraction and simplification.  
 
