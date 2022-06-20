@@ -80,7 +80,7 @@ This tutorial uses [NetLogo](https://ccl.northwestern.edu/netlogo/), a flexible 
     - [Calculating flow accumulation](#calculating-flow-accumulation)
     - [Weather data and ARID](#weather-data-and-arid)
     - [Route calculation with A*](#route-calculation-with-a)
-    - [PondTrade with land productivity](#pondtrade-with-land-productivity)
+    - [The MesaraTrade model](#the-mesaratrade-model)
 
 ## Preparation
 
@@ -3419,6 +3419,11 @@ As the final step in developing PondTrade, let us update our second-tier concept
 
 In this last Block of the tutorial, we will take several advanced steps. Through a sequence of module development, we will reach a final extended version of the PondTrade model that can apply the dynamics we already implemented in combination with a 'grounded' production process and data that refers specifically to our case study.
 
+We advance with a minor revision to our previous conceptual model:
+
+![Pond Trade conceptual model at step 14 (second tier)](images/0_conceptAtStep14_secondTier.png)  
+*Pond Trade conceptual model at step 14 (second tier)*
+
 ---
 ### Spatial data
 
@@ -4995,10 +5000,6 @@ to export-routes-to-file
 
   file-open filePath
 
-  file-print (word "simulation-period: " simulation-period)
-  file-print (word "width: " world-width "; height: " world-height)
-  file-print (word "randomSeed: " randomSeed)
-
   foreach routes
   [
     aRoute ->
@@ -5020,41 +5021,16 @@ to import-routes-from-file
   [
     file-open filePath
 
-    let headingNumberOfLines 3
+    set routes []
 
-    let howHeadingLinesShouldBe (list
-      (word "simulation-period: " simulation-period)
-      (word "width: " world-width "; height: " world-height)
-      (word "randomSeed: " randomSeed)
-      )
-    print howHeadingLinesShouldBe
-    let headingLines []
-    foreach (n-values headingNumberOfLines [i -> i + 1])
+    while [not file-at-end?]
     [
-      headingLineIndex ->
-      set headingLines lput (word "" file-read-line "") headingLines
-    ]
-    print headingLines
-    let passedCheck (
-      (item 0 headingLines = item 0 howHeadingLinesShouldBe) and
-      (item 1 headingLines = item 1 howHeadingLinesShouldBe) and
-      (item 2 headingLines = item 2 howHeadingLinesShouldBe)
-    )
+      let lineString file-read-line
+      set lineString remove-item 0 lineString
+      set lineString remove-item (length lineString - 1) lineString
+      set lineString (word "(list " lineString " )")
 
-    ifelse (not passedCheck)
-    [ print (word "WARNING: " filePath " does not contain the expected metadata defining the current parameter setting") stop ] ;;; unfortunately the stop command doesn't stop the setup procedure
-    [
-      set routes []
-
-      while [not file-at-end?]
-      [
-        let lineString file-read-line
-        set lineString remove-item 0 lineString
-        set lineString remove-item (length lineString - 1) lineString
-        set lineString (word "(list " lineString " )")
-
-        set routes lput (run-result lineString) routes
-      ]
+      set routes lput (run-result lineString) routes
     ]
   ]
 
@@ -5070,9 +5046,243 @@ end
 *Screenshot of the 'routes' module displaying routes between MMIB sites*
 
 ---
-### PondTrade with land productivity
+### The MesaraTrade model
 
-TO DO: 
+Finally, after much of the modelling equivalent of *blood and sweat*, we reach the point where we can combine the contribution of all our modules with the full implementation of the PondTrade model (step 13). We use module 4 - ARID as the starting template and add `import-routes-from-file` and all route related procedures. We should be able to import the routes data saved before and load it during set up, as the last step before `setup-patches`:
 
-![Pond Trade conceptual model at step 14 (second tier)](images/0_conceptAtStep14_secondTier.png)  
-*Pond Trade conceptual model at step 14 (second tier)*
+```NetLogo
+globals
+[
+  ...
+
+  routes
+
+  ...
+]
+
+...
+
+to setup
+
+  clear-all
+
+  ; --- loading/testing parameters -----------
+
+  import-map-with-flows ; import-world must be the first step
+
+  set-constants
+
+  set-parameters
+
+  import-routes-from-file
+
+  ; --- core procedures ----------------------
+
+  set currentYear weatherInputData_firstYear
+  set currentDayOfYear 1
+
+  ;;; values are taken from input data
+  set-day-weather-from-input-data currentDayOfYear currentYear
+
+  ask patchesWithElevationData [ update-WAT ]
+
+  ; --- display & output handling ------------------------
+
+  update-output
+  
+  refresh-view
+
+  paint-routes
+
+  ; -- time -------------------------------------
+
+  reset-ticks
+
+end
+
+...
+
+to refresh-view
+
+  ...
+
+  paint-routes
+  paint-active-routes
+
+end
+
+
+to paint-routes
+
+  ;;; define list of shades of red in NetLogo
+  let redShades (list 11 12 13 14 15 16 17 18 19)
+  ;;; NOTE: this is needed because rgb colors based on elevation are a list
+  ;;; while NetLogo color are numbers
+
+  ; resets route patches to the terrain color
+  foreach routes
+  [ ?1 ->
+    let aRoute ?1
+
+    foreach aRoute
+    [ ??1 ->
+      ask ??1 [ display-elevation ]
+    ]
+  ]
+
+  ; paint route patches in shades of red depending on route frequency
+  foreach routes
+  [ ?1 ->
+    let aRoute ?1
+
+    foreach aRoute
+    [ ??1 ->
+      ask ??1
+      [
+        if (showRoutes)
+        [
+          ifelse (not member? pcolor redShades) ; if its the first route crossing the patch
+          [
+            set pcolor 11
+          ]
+          [
+            set pcolor min (list (pcolor + 1) (19)) ; sets a maximum at 19 (the brightest)
+          ]
+        ]
+      ]
+    ]
+  ]
+
+end
+
+to paint-active-routes
+
+  ask traders
+  [
+    foreach route
+    [ ?1 ->
+      ask ?1
+      [
+        ifelse (showActiveRoutes)
+        [
+          set pcolor yellow
+        ]
+        [
+          if (not showRoutes) ; if not displaying all routes
+          [
+            ; resets to the patch terrain color
+            display-elevation
+          ]
+        ]
+      ]
+    ]
+  ]
+
+end
+
+```
+
+Next, we bring all the extra code and interface objects present in PondTrade-step 13; almost no modification in procedures are required. The exceptions are:
+
+- There is no `isLand` variable here and, given that there is no water patches, we should simply erase the code that distinguishes it.
+- Since there is only land patches and we are using the standard deviation of elevations to assign `pathCost`, there are no `relativePathCostInLand` or `relativePathCostInLand`. We can erase all reference to these two parameters, which will leave the corresponding cultural traits of transport technology as the sole modifiers of `pathCost`.
+
+We carefully organise the schedulling of calls in `setup` and `go`:
+
+```NetLogo
+to setup
+
+  clear-all
+  reset-ticks
+
+  ; set the random seed so we can reproduce the same experiment
+  random-seed seed
+  set patchesCount count patches
+
+  create-map
+
+  create-coastal-settlements
+
+  set-routes
+
+  create-traders-per-settlement
+
+  update-output
+
+  update-display
+
+  update-plots
+
+end
+
+...
+
+to go
+
+  tick
+
+  if (ticks = 10000 or count turtles > 500) [ stop ]
+
+  update-traders
+
+  update-settlements
+
+  update-output
+
+  update-display
+
+end
+```
+
+Last, we need to connect ARID to settlement productivity. We first calculate the value of two new settlement variables, `catchmentArea` and `ARIDinCatchmentArea`. The latter is the average ARID within the settlement catchment area. In turn, the catchment area is calculated using a gradient decay function, dependent on `sizeLevel` and two parameters, `catchmentSlope` and `catchmentRadiusMaximum`. This is a *very* preliminary solution, but will suffice for us to observe the dynamics of PondTrade playing out over the Mesara Valley.
+
+```NetLogo
+settlements-own
+[
+  ...
+  catchmentArea
+  ARIDinCatchmentArea
+]
+
+...
+
+to update-ARIDinCatchmentArea
+  
+  let patchesInCatchmentArea patches in-radius catchmentArea
+  
+  ifelse (count patchesInCatchmentArea = 1)
+  [ set ARIDinCatchmentArea [ARID] of patch-here ]
+  [ set ARIDinCatchmentArea mean [ARID] of patchesInCatchmentArea]
+  
+end
+
+to update-catchmentArea
+  
+  set catchmentArea get-value-in-gradient sizeLevel catchmentSlope catchmentRadiusMaximum
+  
+end
+
+to-report get-value-in-gradient [ input gradient maximum ]
+
+  report e ^ ( - input / ((gradient / 100) * maximum) )
+
+end
+```
+
+And *voilà*! We can now run our boosted pondTrade model over context of our case study.
+
+![View of MesaraTrade after set up](screenshots/BlockC_module6_MesaraTrade%20view.png)  
+*View of MesaraTrade after set up*
+
+But wait! You press the "go" button a few times and NetLogo accuse an error! Can you solve this problem? You will find the solution hidden as a couple of commented-out lines in `BlockC_module6_MesaraTrade.nlogo`.
+
+![View of MesaraTrade interface](screenshots/BlockC_module6_MesaraTrade%20interface.png)  
+*View of MesaraTrade interface*
+
+There are many other points to refactor, explore alternatives and expand. For example, could we find a way to calibrate the speed of traders to the same daily rhythm of the weather variables? Could rivers also affect `patchCost`? Can we visualise `catchmentArea` of settlements in the NetLogo View, instead of `sizeLevel`?
+
+---
+
+We conclude here this tutorial, leaving still untouch many contents about or relevant to ABM in archaeology. A modellers' journey is one that never really ends!
+
+Good luck in your future ABM endevours :)
