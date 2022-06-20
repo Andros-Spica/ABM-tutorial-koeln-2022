@@ -100,7 +100,7 @@ This is a brief overview of agent-based modelling (ABM), primarily focusing on h
 ---
 ### What is Agent-based modelling (ABM)
 
-To better contextualise ABM, we start by positioning this modelling approach in relation to others and even more used by researchers in archaeology and keen disciplines. We then describe ABM's central concepts, including what makes it often more intuitive and adequate for representing certain phenomena, particularly social interactions, yet paradoxically being more complex and unpredictable than other simulation models. 
+To better contextualise ABM, we start by positioning this modelling approach in relation to others used by researchers in archaeology and keen disciplines. We then describe ABM's central concepts, including what makes it often more intuitive and adequate for representing certain phenomena, particularly social interactions, yet paradoxically being more complex and unpredictable than other simulation models. 
 
 ---
 #### **Mathematical models**
