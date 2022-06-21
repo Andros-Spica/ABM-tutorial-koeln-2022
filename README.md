@@ -189,7 +189,7 @@ Here is a non-exhaustive list of topics that have or could have been investigate
   - *Individuals*: *e.g.*, pedestrian dynamics, metabolic scavenging, kinship, micro-economics, mating and marriage, reproduction, cognition (memory, rationality and learning), individual-to-individual cooperation and competition, social learning, norms.
   - *Groups*: *e.g.*, households, organisations, group-to-group cooperation and competition, prestige, reward and punishment, cultural transmission. 
   - *Settlements*: *e.g.*, population dynamics, migration, macro-economics, trade, urbanisation, cultural evolution, settlement patterns, land use, politogenesis.
-  - *Regional to global*: *e.g.*, centre-periphery dynamics, genetic and cultural diffusions.
+  - *Regional to global*: *e.g.*, center-periphery dynamics, genetic and cultural diffusions.
 
 ABM flexibility is also very much appreciated by researchers involved in archaeology, given that it is a discipline both historically and thematically positioned in-between other disciplines in the overlap of the so-called natural and artificial worlds. An ABM model can handle multiple layers of entities and relationships, allowing it to integrate entire models under the same hood.
 
@@ -918,7 +918,7 @@ to create-map
   [ 
     let centralPatch patch 0 0
 
-    let minDistOfLandToCentre 5
+    let minDistOfLandToCenter 5
 
     set pcolor blue
   ]
@@ -937,7 +937,7 @@ to create-map
   [ 
     let centralPatch patch 0 0
 
-    let minDistOfLandToCentre round (0.5 * (world-width / 2))
+    let minDistOfLandToCenter round (0.5 * (world-width / 2))
 
     set pcolor blue
   ]
@@ -945,10 +945,10 @@ to create-map
 end
 ```
 
-We now use this variable for evaluating a criterium for a `ifelse` structure, finding out if a patch is inside or outside our circle. With this, we are ordering patches to paint themselves green or blue depending on if their distance to the center is less than a given value, i.e. `minDistOfLandToCentre`.
+We now use this variable for evaluating a criterium for a `ifelse` structure, finding out if a patch is inside or outside our circle. With this, we are ordering patches to paint themselves green or blue depending on if their distance to the center is less than a given value, i.e. `minDistOfLandToCenter`.
 
 ```NetLogo
-ifelse (distance centralPatch < minDistOfLandToCentre)
+ifelse (distance centralPatch < minDistOfLandToCenter)
 [
   set pcolor blue ; water
 ]
@@ -967,10 +967,10 @@ to create-map
     ; set central patch
     let centralPatch patch 0 0
 
-    ; set minimum distance to centre depending on world width
-    let minDistOfLandToCentre round (0.5 * (world-width / 2))
+    ; set minimum distance to center depending on world width
+    let minDistOfLandToCenter round (0.5 * (world-width / 2))
 
-    ifelse (distance centralPatch < minDistOfLandToCentre)
+    ifelse (distance centralPatch < minDistOfLandToCenter)
     [
       set pcolor blue ; water
     ]
@@ -988,7 +988,7 @@ end
 
 #### **Step 1a: De-composing "magic numbers"**
 
-The code we just created has several fixed arbitrary values (the coordinates of the `centralPatch`, the values used to calculate `minDistOfLandToCentre`). It is good enough for us to draw a *particular* blue circle, but it is insufficient to draw other *types of blue circle*. Of course, the code will never be able to draw *anything*, if we are not programming it to do it. For instance, the colors `blue` and `green` are also magic numbers, but we are hardly interest in having them as parameters. We must generalize but also compromise, accepting that there will be possibilities that are not covered by our model.
+The code we just created has several fixed arbitrary values (the coordinates of the `centralPatch`, the values used to calculate `minDistOfLandToCenter`). It is good enough for us to draw a *particular* blue circle, but it is insufficient to draw other *types of blue circle*. Of course, the code will never be able to draw *anything*, if we are not programming it to do it. For instance, the colors `blue` and `green` are also magic numbers, but we are hardly interest in having them as parameters. We must generalize but also compromise, accepting that there will be possibilities that are not covered by our model.
 
 First, is there any case where the `patch 0 0` is not the one at the center of the grid? Imagine that you don't like to have negative coordinates in your model. Go to "Settings" and modify the "location of origin" to be at the corner. Now, test the `create-map` procedure:
 
@@ -1007,11 +1007,11 @@ observer> show patch (min-pxcor + floor (world-width / 2)) (min-pycor + floor (w
 observer: (patch 16 16)
 ```
 
-Now, regarding `minDistOfLandToCentre`, we could simply bring it as a parameter to be set in the interface instead of hard-coded (*e.g.* as a slider). This would be a better design, but we still would have a potential problem. Maybe you do not want the grid to be squared (*e.g.*, 33x33), but rectangular (*e.g.*, 100x20) instead. This is what you would get:
+Now, regarding `minDistOfLandToCenter`, we could simply bring it as a parameter to be set in the interface instead of hard-coded (*e.g.* as a slider). This would be a better design, but we still would have a potential problem. Maybe you do not want the grid to be squared (*e.g.*, 33x33), but rectangular (*e.g.*, 100x20) instead. This is what you would get:
 
 ![](screenshots/BlockA_PondTrade_step01_replacing-magic-numbers-adapt-center_1.png)
 
-Again, not what we are looking for. No matter how strange our map is shaped, we want our pond to be always fully within the grid. To do this, we must modify our calculation of `minDistOfLandToCentre` to account for both width and height. One way of doing it is to calculate the radius for both dimensions and then choose the lowest value.
+Again, not what we are looking for. No matter how strange our map is shaped, we want our pond to be always fully within the grid. To do this, we must modify our calculation of `minDistOfLandToCenter` to account for both width and height. One way of doing it is to calculate the radius for both dimensions and then choose the lowest value.
 
 ```NetLogo
 let minXDistOfLandToCenter round 0.5 * (world-width / 2) ; minimum distance in X
@@ -1033,7 +1033,7 @@ Success!
 
 Once you defined a procedure in raw terms and tested that it does what you expect, you probably want to generalize it further. As the aim of modeling is to represent *a type of* phenomenon, it is a good practice to program all non-dynamic conditions as parameters. In NetLogo, parameters are often those variables that can be set through user input in the interface tab (*e.g.*, slides, selectors, numeric fields).
 
-After the later changes, we still have two magic numbers in our code. Regarding the calculation of `centralPatch` and `minDistOfLandToCentre`, we used `2` to divide `world-width` and `world-height`, so that the circle is always draw in the center of the grid. Although it is possible, we will not replace this value with a parameter. As an exercise aside, you can test the outcome of having different numbers instead of `2`.
+After the later changes, we still have two magic numbers in our code. Regarding the calculation of `centralPatch` and `minDistOfLandToCenter`, we used `2` to divide `world-width` and `world-height`, so that the circle is always draw in the center of the grid. Although it is possible, we will not replace this value with a parameter. As an exercise aside, you can test the outcome of having different numbers instead of `2`.
 
 The other "magic number" is `0.5`, used to represent the relative size of the pond radius, i.e., the *half* of the *half of the smaller dimension*.  Here we have a good candidate for a parameter. It is reasonable to believe that the size of the pond will be relevant to our model's results. Mainly, we expect that larger ponds will make trade slower, assuming a fixed number of settlements, evenly distributed around the pond.
 
@@ -1099,7 +1099,7 @@ end
 
 We increased significantly the `create-map` procedure, but we now have a process that is both flexible and controllable by user input. Yet, we still have a pending issue to solve.
 
-The fact that the `centralPatch` and `minDistOfLandToCentre` are local variables (`let`) and placed inside `ask patches [ <ACTIONS> ]` means that we are creating and destroying a different variable once for every patch. We cannot use these variables (plural intended) outside their enclosing brackets and patches hold no memory of their values before or after this particular action. Does anything feel wrong about this? 
+The fact that the `centralPatch` and `minDistOfLandToCenter` are local variables (`let`) and placed inside `ask patches [ <ACTIONS> ]` means that we are creating and destroying a different variable once for every patch. We cannot use these variables (plural intended) outside their enclosing brackets and patches hold no memory of their values before or after this particular action. Does anything feel wrong about this? 
 
 Besides taking unnecessary computational resources, this design does not generete any errors and, for now, is quite inofensive. However, while it can be easily solved in a short piece of code, it might become harder to find and have odd repercussions over other parts of our model later on. 
 
@@ -1157,7 +1157,7 @@ to create-map
 
   let centralPatch patch (min-pxcor + floor (world-width / 2)) (min-pycor + floor (world-height / 2))
 
-  ; find minimun distance to centre
+  ; find minimun distance to center
   let minXDistOfLandToCenter round ((pondSize / 100) * (world-width / 2)) ; minimum distance in X
   let minYDistOfLandToCenter round ((pondSize / 100) * (world-height / 2)) ; minimum distance in Y
   let minDistOfLandToCenter min (list minXDistOfLandToCenter minYDistOfLandToCenter)
@@ -2184,7 +2184,7 @@ Once a destination is decided, traders must move towards it and then, once there
 ```NetLogo
 to move-to-destination ; ego = trader
 
-  ; update lastPosition if in a patch centre
+  ; update lastPosition if in a patch center
   if ((xcor = [pxcor] of patch-here) and (ycor = [pycor] of patch-here))
   [
     set lastPosition patch-here
@@ -2407,7 +2407,7 @@ to update-traders
   ; UPDATE LAST POSITION
   ask traders
   [
-    ; update lastPosition if in a patch centre
+    ; update lastPosition if in a patch center
     if ((xcor = [pxcor] of patch-here) and (ycor = [pycor] of patch-here))
     [
       set lastPosition patch-here
@@ -2515,13 +2515,13 @@ end
 
 to-report is-in-base ; ego = trader
 
-  report (xcor = [xcor] of base) and (ycor = [ycor] of base) ; if the trader arrived at the centre of the base patch
+  report (xcor = [xcor] of base) and (ycor = [ycor] of base) ; if the trader arrived at the center of the base patch
 
 end
 
 to-report is-in-destination ; ego = trader
 
-  report (xcor = [xcor] of destination) and (ycor = [ycor] of destination) ; if the trader arrived at the centre of the destination patch
+  report (xcor = [xcor] of destination) and (ycor = [ycor] of destination) ; if the trader arrived at the center of the destination patch
 
 end
 ```
