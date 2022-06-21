@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/492761266.svg)](https://zenodo.org/badge/latestdoi/492761266)
+
 # Archaeological ABM at Cologne: from concept to application
 Materials for the session organized by the [CoDArchLab](http://archaeoinformatik.uni-koeln.de/) in the Institute of Archaeology at University of Cologne (20/6/2022).
 
@@ -98,7 +100,7 @@ This is a brief overview of agent-based modelling (ABM), primarily focusing on h
 ---
 ### What is Agent-based modelling (ABM)
 
-To better contextualise ABM, we start by positioning this modelling approach in relation to others and even more used by researchers in archaeology and keen disciplines. We then describe ABM's central concepts, including what makes it often more intuitive and adequate for representing certain phenomena, particularly social interactions, yet paradoxically being more complex and unpredictable than other simulation models. 
+To better contextualise ABM, we start by positioning this modelling approach in relation to others used by researchers in archaeology and keen disciplines. We then describe ABM's central concepts, including what makes it often more intuitive and adequate for representing certain phenomena, particularly social interactions, yet paradoxically being more complex and unpredictable than other simulation models. 
 
 ---
 #### **Mathematical models**
@@ -171,7 +173,7 @@ Last, another significant advantage of ABM is that it can include parts (algorit
 ---
 ### ABM in archaeology
 
-ABM has conceptual roots and applications in other fields relatively early, hand-to-hand with the history of computer science. However, this methodology was formed as it is today and introduced more broadly into social sciences until the late 1990s. In its many forms, simulation methods only started to be used in disciplines like archaeology due to the development of personal computers, which progressively lowered computational times from days to seconds.
+ABM has conceptual roots and applications in other fields relatively early, hand-to-hand with the history of computer science. However, this methodology was formed as it is today and introduced more broadly into social sciences only in the late 1990s. In its many forms, simulation methods only started to be used in disciplines like archaeology due to the development of personal computers, which progressively lowered computational times from days to seconds.
 
 ABM has been exceptionally well accepted by archaeologists, given its pre-adaptation towards distributed and stochastic processes. In theory, most phenomena of interest for archaeology can be represented with ABM, to the satisfaction of archaeologists. Other modelling and simulation approaches (*e.g.*, Dynamic Systems) were and still are used but often encounter great resistance due to their higher abstraction and simplification.  
 
