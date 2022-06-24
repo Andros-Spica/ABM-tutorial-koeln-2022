@@ -374,7 +374,7 @@ https://github.com/ArchoLen/The-ABM-in-Archaeology-Bibliography
 
 > Izquierdo, Luis R., Segismundo S. Izquierdo, and William H. Sandholm. 2019. Agent-Based Evolutionary Game Dynamics. https://wisc.pb.unizin.org/agent-based-evolutionary-game-dynamics/.
 
-> Banning, Frederik. 2022. ‘Julia ♥ ABM #1: Starting from Scratch’. Julia Community. 2022. https://forem.julialang.org/fbanning/issue-1-starting-from-scratch-1ibo.
+> Banning, Frederik. 2022. ‘Julia ♥ ABM #1: Starting from Scratch’. Julia Community. 2022. https://forem.julialang.org/fbanning/series/1.
 
 ---
 ---
