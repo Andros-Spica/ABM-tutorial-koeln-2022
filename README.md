@@ -1018,9 +1018,9 @@ Now, regarding `minDistOfLandToCenter`, we could simply bring it as a parameter 
 Again, not what we are looking for. No matter how strange our map is shaped, we want our pond to be always fully within the grid. To do this, we must modify our calculation of `minDistOfLandToCenter` to account for both width and height. One way of doing it is to calculate the radius for both dimensions and then choose the lowest value.
 
 ```NetLogo
-let minXDistOfLandToCenter round 0.5 * (world-width / 2) ; minimum distance in X
+let minXDistOfLandToCenter round (0.5 * world-width / 2) ; minimum distance in X
 
-let minYDistOfLandToCenter round 0.5 * (world-height / 2) ; minimum distance in Y
+let minYDistOfLandToCenter round (0.5 * world-height / 2) ; minimum distance in Y
 
 let minDistOfLandToCenter min (list minXDistOfLandToCenter minYDistOfLandToCenter)
 ```
