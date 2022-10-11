@@ -5046,7 +5046,7 @@ end
 ![Screenshot of the 'routes' module displaying routes between EMIII-MMIA sites](screenshots/BlockC_module5_routes%20interface-EMIII-MMIA.png)  
 *Screenshot of the 'routes' module displaying routes between EMIII-MMIA sites*
 
-![Screenshot of the 'routes' module displaying routes between MMIB sites](screenshots/BlockC_module_routes%20interface_MMIB.png)  
+![Screenshot of the 'routes' module displaying routes between MMIB sites](screenshots/BlockC_module5_routes%20interface-MMIB.png)  
 *Screenshot of the 'routes' module displaying routes between MMIB sites*
 
 ---
