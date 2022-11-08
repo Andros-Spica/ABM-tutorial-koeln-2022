@@ -5273,7 +5273,7 @@ to-report get-value-in-gradient [ input gradient maximum ]
 end
 ```
 
-And *voilà*! We can now run our boosted pondTrade model over context of our case study.
+And *voilà*! We can now run our boosted pondTrade model within the context of our case study.
 
 ![View of MesaraTrade after set up](screenshots/BlockC_module6_MesaraTrade%20view.png)  
 *View of MesaraTrade after set up*
