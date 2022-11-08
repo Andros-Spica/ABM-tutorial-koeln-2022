@@ -5189,7 +5189,7 @@ end
 Next, we bring all the extra code and interface objects present in PondTrade-step 13; almost no modification in procedures are required. The exceptions are:
 
 - There is no `isLand` variable here and, given that there is no water patches, we should simply erase the code that distinguishes it.
-- Since there is only land patches and we are using the standard deviation of elevations to assign `pathCost`, there are no `relativePathCostInLand` or `relativePathCostInLand`. We can erase all reference to these two parameters, which will leave the corresponding cultural traits of transport technology as the sole modifiers of `pathCost`.
+- Since there is only land patches and we are using the standard deviation of elevations to assign `pathCost`, there are no `relativePathCostInLand` or `relativePathCostInPort`. We can erase all reference to these two parameters, which will leave the corresponding cultural traits of transport technology as the sole modifiers of `pathCost`.
 
 We carefully organise the schedulling of calls in `setup` and `go`:
 
