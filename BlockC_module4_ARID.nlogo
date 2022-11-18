@@ -575,6 +575,8 @@ to refresh-view
     ask patchesWithElevationData [ display-arid ]
   ]
 
+  display-flows
+
 end
 
 to display-elevation
@@ -637,6 +639,18 @@ end
 to display-ARID
 
   set pcolor 12 + 6 * ARID
+
+end
+
+to display-flows
+
+  ask flowHolders
+  [
+    ask my-links
+    [
+      ifelse (show-flows) [ show-link ] [ hide-link ]
+    ]
+  ]
 
 end
 

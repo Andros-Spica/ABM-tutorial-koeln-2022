@@ -1124,6 +1124,8 @@ to refresh-view
     ask patchesWithElevationData [ display-arid ]
   ]
 
+  display-flows
+
   paint-routes
   paint-active-routes
 
@@ -1276,6 +1278,18 @@ end
 to display-ARID
 
   set pcolor 12 + 6 * ARID
+
+end
+
+to display-flows
+
+  ask flowHolders
+  [
+    ask my-links
+    [
+      ifelse (show-flows) [ show-link ] [ hide-link ]
+    ]
+  ]
 
 end
 
@@ -2041,7 +2055,7 @@ SWITCH
 156
 showRoutes
 showRoutes
-1
+0
 1
 -1000
 
