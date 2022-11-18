@@ -3470,7 +3470,9 @@ to load-gis
 end
 ```
 
-The files in "data/Cretedata/" were distributed during our in-person session, courtesy of Dr Eleftheria Paliou (University of Cologne). However, these can be replaced with equivalent data, possibly with a few minor adjustments. We are using:
+The files in "data/Cretedata/" were distributed during our in-person session, courtesy of Dr Eleftheria Paliou (University of Cologne). Site coordinates were randomly shifted in QGIS to be published online after the session.
+
+We are using:
 
 - Two shape files containing point coordinates of various archaeological sites in the region, corresponding to two aggregated periods (see [Minoan Chronology](https://en.wikipedia.org/wiki/Minoan_chronology)):  
   - `EMIII_MMIAsites.shp`: sites dating from the Prepalatial Period, specifically the Early Minoan III (EMIII) and Middle Minoan IA (MMIA) Periods
