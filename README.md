@@ -896,7 +896,9 @@ Notice that both `pcolor` and `blue` are 'primitives', so they are automatically
 
 Since we don't want all patches to have the same color, we need to build some structure that give different colors to patches depending on their position, so that a blue circle is draw.
 
-Considering how to draw a circle, we need two bits of information: a *center* and a *radius*.
+Considering how to draw a circle, we need two bits of information: a *center* and a *radius* (respectively, O and R in the figure).
+
+<a title="Jokes Free4Me, CC BY-SA 3.0 &lt;https://creativecommons.org/licenses/by-sa/3.0&gt;, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Circle-withsegments.svg"><img width="256" alt="Circle-withsegments" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Circle-withsegments.svg/512px-Circle-withsegments.svg.png"></a>
 
 First, we must define a center. Because we won't use this information for anything else, we can declare and set a local variable (i.e., accessable only from its own context), using the syntax `let <VARIABLE> <VALUE>`. We define the center patch coordinates as (0,0):
 
@@ -949,7 +951,9 @@ to create-map
 end
 ```
 
-We now use this variable for evaluating a criterium for a `ifelse` structure, finding out if a patch is inside or outside our circle. With this, we are ordering patches to paint themselves green or blue depending on if their distance to the center is less than a given value, i.e. `minDistOfLandToCenter`.
+Running this code will still not produce a blue circle. Rather, we are asking for all patches to paint themselve blue, no matter what the values of `centralPatch` or `minDistOfLandToCenter`.
+
+To differenciate patches to be painted blue, we now use `minDistOfLandToCenter` for evaluating a criterium for a `ifelse` structure, finding out if a patch is inside or outside our circle. With this, we are ordering patches to paint themselves green or blue depending on if their distance to the center is less than a given value, i.e. `minDistOfLandToCenter`.
 
 ```NetLogo
 ifelse (distance centralPatch < minDistOfLandToCenter)
