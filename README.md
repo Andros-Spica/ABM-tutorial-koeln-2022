@@ -1525,7 +1525,7 @@ Here is a summary of the improvements we can make:
 - Define a new procedure `paint-patches` dedicated only to set patch colors based on `isLand`
 - Call `smooth-coast-line` and `paint-patches` at the end of `create-map`
 - In the evaluation of `coastLineSmoothThreshold` used in `smooth-coast-line`, consider it in relation to the actual number of neighbors  instead of as an absolute number (to avoid having isolated water bodies adjacent to the world edges, where there are less than 8 neighbors)
-- Rearrenge the interface elements to set apart the parameters we will be using for terrain generation 
+- Rearrange the interface elements to set apart the parameters we will be using for terrain generation 
 
 ```NetLogo
 patches-own [ isLand ]
