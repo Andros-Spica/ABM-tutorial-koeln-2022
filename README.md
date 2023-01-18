@@ -1335,7 +1335,7 @@ With this, we can now run `create-map` with any of the alternative designs witho
 
 #### **Step 4d: patch neighborhood**
 
-Despite having all the alternative modes of stochasticity, our ponds are still not quite what we need. This king of terrain might be valid to represent something like a swamp, but not a distinctive water body. There is no coastline, which makes PondTrade more interesting.
+Despite having all the alternative modes of stochasticity, our ponds are still not quite what we need. This kind of terrain might be valid to represent something like a swamp, but not a distinctive water body. There is no coastline, which makes PondTrade more interesting.
 
 One generic, but very useful technique in distributed computation is "smoothing". More precisily, smoothing refers to the approximation of each point in a variable to the average of a sample of points, often taken from within the neighbourhood of the point.
 
