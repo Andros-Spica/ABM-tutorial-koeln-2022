@@ -1636,7 +1636,7 @@ end
 ---
 ## Block B
 
-By now, you might think this is all too complicated, fearing what is coming next. No worries! Block A's content is the harder part of the learning curve. We have reviewed much content that is not strictly required to implement most ABM models. However, I promise that learning these programming practices with a relatively simple and seemly trivial task, such as creating pond-like terrains, will pay off later.
+By now, you might think this is all too complicated, fearing what is coming next. No worries! Block A's content is the hardest part of the learning curve. We have reviewed much content that is not strictly required to implement most ABM models. However, I promise that learning these programming practices with a relatively simple and seemly trivial task, such as creating pond-like terrains, will pay off later.
 
 In Block B, we will finally build a version of PondTrade through steps that will introduce you to more advanced algorithms that bring us closer to our conceptual model, such as path cost calculation, feedback loops, and evolution through vector variables.
 
@@ -1652,7 +1652,7 @@ Our first aim is to reach a consolidated version corresponding to the first-tier
 
 #### **Step 6: defining *agents***
 
-One of the necessary first steps in implementing and ABM model is to define the types of agents we plan to have, based on our initial conceptual model. We must emphasise the *plan* part here because there is always a possibility that we revise the conceptual model up to the point we require more or fewer specifications about the agents.
+One of the necessary first steps in implementing and ABM model is to define the types of agents we plan to have, based on our initial conceptual model. We must emphasise the *plan* part here. There is always the possibility that we will revise the conceptual model up to the point that we will require more or fewer specifications about the agents.
 
 According to our conceptual model so far, we need two types of agents:
 
