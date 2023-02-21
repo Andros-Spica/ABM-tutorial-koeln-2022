@@ -894,7 +894,9 @@ Notice that both `pcolor` and `blue` are 'primitives', so they are automatically
 
 Since we don't want all patches to have the same color, we need to build some structure that give different colors to patches depending on their position, so that a blue circle is draw.
 
-Considering how to draw a circle, we need two bits of information: a *center* and a *radius*.
+Considering how to draw a circle, we need two bits of information: a *center* and a *radius* (respectively, O and R in the figure).
+
+<a title="Jokes Free4Me, CC BY-SA 3.0 &lt;https://creativecommons.org/licenses/by-sa/3.0&gt;, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Circle-withsegments.svg"><img width="256" alt="Circle-withsegments" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Circle-withsegments.svg/512px-Circle-withsegments.svg.png"></a>
 
 First, we must define a center. Because we won't use this information for anything else, we can declare and set a local variable (i.e., accessable only from its own context), using the syntax `let <VARIABLE> <VALUE>`. We define the center patch coordinates as (0,0):
 
@@ -947,7 +949,9 @@ to create-map
 end
 ```
 
-We now use this variable for evaluating a criterium for a `ifelse` structure, finding out if a patch is inside or outside our circle. With this, we are ordering patches to paint themselves green or blue depending on if their distance to the center is less than a given value, i.e. `minDistOfLandToCenter`.
+Running this code will still not produce a blue circle. Rather, we are asking for all patches to paint themselve blue, no matter what the values of `centralPatch` or `minDistOfLandToCenter`.
+
+To differenciate patches to be painted blue, we now use `minDistOfLandToCenter` for evaluating a criterium for a `ifelse` structure, finding out if a patch is inside or outside our circle. With this, we are ordering patches to paint themselves green or blue depending on if their distance to the center is less than a given value, i.e. `minDistOfLandToCenter`.
 
 ```NetLogo
 ifelse (distance centralPatch < minDistOfLandToCenter)
@@ -1333,7 +1337,7 @@ With this, we can now run `create-map` with any of the alternative designs witho
 
 #### **Step 4d: patch neighborhood**
 
-Despite having all the alternative modes of stochasticity, our ponds are still not quite what we need. This king of terrain might be valid to represent something like a swamp, but not a distinctive water body. There is no coastline, which makes PondTrade more interesting.
+Despite having all the alternative modes of stochasticity, our ponds are still not quite what we need. This kind of terrain might be valid to represent something like a swamp, but not a distinctive water body. There is no coastline, which makes PondTrade more interesting.
 
 One generic, but very useful technique in distributed computation is "smoothing". More precisily, smoothing refers to the approximation of each point in a variable to the average of a sample of points, often taken from within the neighbourhood of the point.
 
@@ -1519,7 +1523,7 @@ Here is a summary of the improvements we can make:
 - Define a new procedure `paint-patches` dedicated only to set patch colors based on `isLand`
 - Call `smooth-coast-line` and `paint-patches` at the end of `create-map`
 - In the evaluation of `coastLineSmoothThreshold` used in `smooth-coast-line`, consider it in relation to the actual number of neighbors  instead of as an absolute number (to avoid having isolated water bodies adjacent to the world edges, where there are less than 8 neighbors)
-- Rearrenge the interface elements to set apart the parameters we will be using for terrain generation 
+- Rearrange the interface elements to set apart the parameters we will be using for terrain generation 
 
 ```NetLogo
 patches-own [ isLand ]
@@ -1630,7 +1634,7 @@ end
 ---
 ## Block B
 
-By now, you might think this is all too complicated, fearing what is coming next. No worries! Block A's content is the harder part of the learning curve. We have reviewed much content that is not strictly required to implement most ABM models. However, I promise that learning these programming practices with a relatively simple and seemly trivial task, such as creating pond-like terrains, will pay off later.
+By now, you might think this is all too complicated, fearing what is coming next. No worries! Block A's content is the hardest part of the learning curve. We have reviewed much content that is not strictly required to implement most ABM models. However, I promise that learning these programming practices with a relatively simple and seemly trivial task, such as creating pond-like terrains, will pay off later.
 
 In Block B, we will finally build a version of PondTrade through steps that will introduce you to more advanced algorithms that bring us closer to our conceptual model, such as path cost calculation, feedback loops, and evolution through vector variables.
 
@@ -1646,7 +1650,7 @@ Our first aim is to reach a consolidated version corresponding to the first-tier
 
 #### **Step 6: defining *agents***
 
-One of the necessary first steps in implementing and ABM model is to define the types of agents we plan to have, based on our initial conceptual model. We must emphasise the *plan* part here because there is always a possibility that we revise the conceptual model up to the point we require more or fewer specifications about the agents.
+One of the necessary first steps in implementing and ABM model is to define the types of agents we plan to have, based on our initial conceptual model. We must emphasise the *plan* part here. There is always the possibility that we will revise the conceptual model up to the point that we will require more or fewer specifications about the agents.
 
 According to our conceptual model so far, we need two types of agents:
 
