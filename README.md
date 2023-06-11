@@ -615,10 +615,17 @@ breed [<BREED_2_NAME_PLURAL> <BREED_2_NAME_SINGULAR>]
 We can then use the plural or singular form of the `breed` name directly, instead of referring to the generic `turtles`.
 
 ```NetLogo
-<BREED_1_NAME_PLURAL> <WHO_NUMBER>
+<BREED_1_NAME_SINGULAR> <WHO_NUMBER>
 ```
 
 This is useful, of course, when there are more the one `breed`to be defined, so that they are easily distinguished and inteligible in the code.
+
+Agents can be specifically selected also without considering their specific IDs. The `one-of` primitive offers a easy way to randomly select one agent (`turtles` and `patches`) from all (or a subset of all) agents of a given type.
+
+```NetLogo
+one-of <BREED_2_NAME_PLURAL>
+one-of patches
+```
 
 Last, we should keep in mind that `turtles` can be created and destroyed on-the-fly during simulations, while `patches` are created in the background upon initialisation, according to the model settings (*e.g.* grid dimensions), but never destroyed during simulation runs.
 
@@ -796,7 +803,7 @@ However, all variables referenced inside these structures must be properly relat
 ```NetLogo
 ask <BREED_1_NAME_PLURAL>
 [ 
-  set <BREED_1_VARIABLE_2> of  <VALUE>
+  print [<BREED_1_VARIABLE_2>] of <BREED_2_NAME_SINGULAR> <WHO_NUMBER>
 ]
 ```
 
@@ -806,7 +813,36 @@ It is possible to select a subset of any set of entities through logic clauses t
 <TYPE_NAME_PLURAL> with [ <VARIABLE_NAME_1> > <THRESHOLD> ]
 ```
 
-As a summary minimum example, running the folowing script in NetLogo will define a type of turtle named `my-chatty-agents` (plural)
+When operating from the inside an `ask` command, we can also make sure to filter-out the agent currently performing the call, by using the primitive `other`:
+
+```NetLogo
+ask <BREED_1_NAME_PLURAL>
+[
+  ask other <BREED_1_NAME_PLURAL>
+  [
+    print <WHO_NUMBER>
+  ]
+]
+```
+
+All this can be combined to form quite complex rules of behaviour, yet keeping itself generally readable:
+
+```NetLogo
+to celebrate-birthday
+
+  ask people
+  [
+    if (today = my-birthday)
+    [
+      ask other people with [presents > 0]
+      [
+        give-present
+      ]
+    ]
+  ]
+
+end
+```
 
 #### **Grid**
 
