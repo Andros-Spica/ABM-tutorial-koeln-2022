@@ -109,6 +109,9 @@ Despite this distinction, there is no genuine opposition between models with dif
 
 Within the large family of mathematical models, ABM models lie typically within a category that can be characterised as *explicative* or *mechanistic*. Explicative models are focused on an explanation, expressing processes through realistic relationships between variables, often including assumptions. Non-explicative or *descriptive* mathematical models are used more strictly to describe, reproduce or extrapolate the relationship between variables (i.e., most statistical models). The latter models are about *patterns* or *trends* in data, while the former are about the *mechanisms* underlying data, at least as we can define them based on our current understanding of the phenomena's domain.
 
+<img src="https://github.com/Andros-Spica/modelling-simulation-graphs/blob/main/from-model-to-simulation-models/from-model-to-simulation-models_p1.png?raw=true" alt="models to math models"
+					style="width: 550px; border: none; box-shadow: none; margin-bottom: 0%; background-color: azure;"/>
+
 The line between these categories is blurred and confounded by many models and model users. Notice, for example, that the very term "explanation" is widely used in non-mechanistic ways (*e.g.*, when it is said that the educational level of a person *explains* that person's income). However, the bulk of models on each side is considerable, and ABM models, in particular, have traits that are undeniably linked to the formulation of *mechanisms*.
 
 To help understand this distinction, we can think about one of the most simple and popular descriptive models used today: the linear regression model. Every regression model is a generalised equation based on a geometric pattern, a straight line in the case of the linear regression:
@@ -124,6 +127,32 @@ To put an archaeological example, imagine we have two variables measured in a co
 
 The trend expressed by the linear model is but a "hint" of the mechanisms that are or could be postulated to explain it. Any hypotheses about the reason behind the correlation must be formulated outside the model, before or after its creation, for instance, by combining it with a natural language model. Thus, a descriptive model is inherently incomplete as an analytic tool and remains trivial unless it is associated with an external explicative model, formal or informal.
 
+
+
+Target reality:  
+<a title="Santeri Viinamäki, CC BY-SA 4.0 &lt;https://creativecommons.org/licenses/by-sa/4.0&gt;, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Green_watering_can.jpg">
+<img width="200" alt="Green watering can" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Green_watering_can.jpg/512px-Green_watering_can.jpg"	style="border: none; box-shadow: none;"></a>
+
+Observations:  
+<img width="200" alt="Picture maze solving -observations" 
+						src="images/Picture_maze_solving_observations.png"
+						style="border: none; box-shadow: none; margin-bottom: -2%;">
+
+descriptive model:  
+<img width="200" alt="Picture maze solving - descriptive model" 
+						src="images/Picture_maze_solving_descrip-model.png"
+						style="border: none; box-shadow: none; margin-bottom: -2%;">
+
+A model that return the output given the input
+
+Explanatory model:  
+<a title="Original: User:Icey, Animation: User:MichaelFrey, CC BY-SA 4.0 &lt;https://creativecommons.org/licenses/by-sa/4.0&gt;, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Picture_maze_solving.gif">
+<img width="256" alt="Picture maze solving - explanatory model" 
+src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Picture_maze_solving.gif" style="border: none; box-shadow: none; margin-bottom: -2%;"></a>
+
+A model that return the output given the input **and the definition of a mechanism**
+
+
 Still, mathematical models have been proven to be very useful and are widely adopted. Consider that in the field of artificial intelligence, the success of the descriptive models encompassed by the so-called *machine learning* have pushed aside the approach using programmed or procedural behaviour, from which ABM has branched. Within the wave of data-driven methods, some scholars have even started to question the concept of "explanation" itself, posing that it might be a well-hidden fallacy of human cognition. On the other hand, it is still debatable how much *human* understanding can come from descriptive models alone.
 
 ---
@@ -132,6 +161,9 @@ Still, mathematical models have been proven to be very useful and are widely ado
 In contrast with other mechanistic and dynamic mathematical modelling approaches, ABM seeks to represent a phenomenon by explicitly modeling its parts. Therefore, ABM involves the expectation that the phenomenon at the macro-level is an *emergency* of the dynamics at the micro-level. Moreover, ABM implies that the parts, the agents, constitute 'populations', *i.e.*, they share common properties and behavioral rules. The 'agency' behind the term 'agent' also implies that these parts have certain autonomy with respect to each other and the environment, which justifies simulating their behavior at an individual level.
 
 In practice, 'autonomy' often translates as the agents' ability to take action, move, decide, or even think and remember. Nevertheless, agent-based models also include entities that are *technically* agents (on the terms of [multi-agent systems](https://en.wikipedia.org/wiki/Multi-agent_system)), but lack those abilities or are not considered real discrete entities. The most common case is to represent space sectors as agents fixed to unique positions in a grid to facilitate the implementation of distributed spatial processes (*e.g.*, the growth of vegetation dependent on local factors). In NetLogo, this type of agent is predefined as `patches` and is extensively used in models in ecology and geography.
+
+<img src="https://github.com/Andros-Spica/modelling-simulation-graphs/blob/main/from-model-to-simulation-models/from-model-to-simulation-models_p2.png?raw=true" alt="types of math models" class="fragment" style="width: 550px; border: none; box-shadow: none; margin-bottom: 0%; background-color: azure;"/>
+			
 
 Compared to other modeling and simulation approaches, ABM is more intuitive but also more complex. For example, the [Lotka-Volterra predator-prey model](https://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equations) in ecology is a pair of differential equations that are relatively simple and conceptually straightforward. They essentially express the following dynamics:
 
@@ -207,7 +239,9 @@ In the remaining sections of the Introduction, we will go deeper in describing t
 ---
 #### **Modelling 'steps'**
 
-Modelling with ABM can be divided into steps, most of which are identified by the community of practitioners as either normative or recommended phases of model development. With minor variations, these are also recognised in other simulation and non-simulation modelling approaches. The steps are:
+Modelling with ABM can be divided into steps, most of which are identified by the community of practitioners as either normative or recommended phases of model development. With minor variations, these are also recognised in other simulation and non-simulation modelling approaches.
+
+The steps are:
 
 >**Definition of the research question and phenomenon**. To define a research question and the phenomena involved, we must think in terms of systems, identifying and defining a set of elements we deem relevant and their interrelationships. In this initial step, the key is to delimitate the target system, within which external, undefined factors do not overly determine the interaction of elements. Here, we must decide on what is relevant *for us* and set aside the rest. Ideally, we should move to the next step only once we have a hypothetical mechanism to focus on, formulated roughly but in detail enough so we can formalise it later. We will call this our **_conceptual model_**.
 
@@ -224,6 +258,8 @@ Furthermore, a few authors, myself included, also like to highlight two addition
 >**Understanding**. The modeller must understand the model, know the variety of dynamics it can generate, and be aware of its limitations regarding the representation of the target system.
 
 >**Documenting**. The understanding obtained by the modeller at one point is of little use to others and, eventually, her or himself in the long-term future. To ensure that such an understanding is passed through, we must invest significant time in documenting the model's conceptual design and source code. Note that this is not equivalent to an academic publication, especially because most scientific journals push for a greater emphasis on the results rather than the bits and pieces of simulation models.
+
+![Overview of modelling steps](images/Activities2.PNG)
 
 ---
 #### **Modelling '(mis)steps'**
